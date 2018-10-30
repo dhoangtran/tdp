@@ -209,7 +209,7 @@ def getPredictedDemand(sin, cos, ratio, deltaX, deltaY, nRow, nCol, originPositi
 def getStatistic(sin, cos, ratio, deltaX, deltaY, nRow, nCol, originPosition, nRegions):
     
     fr = open(settings.dataFile)
-    fw = open(settings.statFile, 'w')
+    fw = open(settings.statFile, 'a')
     # skip first line
     fr.readline()
     nTripInCenter = 0;

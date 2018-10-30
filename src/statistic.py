@@ -6,6 +6,7 @@ import googlemaps
 import matplotlib.pyplot as plt
 
 import settings
+from __builtin__ import range
 
 def getBoundingArea():
     
@@ -49,8 +50,8 @@ def getBoundingArea2():
     nTripInCenter = 0;
     nTotalTrip = 0;
     
-    max_longitude = - 73.732160
-    min_longitude = - 74.243821
+    max_longitude = -73.732160
+    min_longitude = -74.243821
     max_latitude = 40.928536
     min_latitude = 40.496351
     long = []
@@ -67,7 +68,54 @@ def getBoundingArea2():
     # print bounding area
     fr.close()
     
-    return (long, lat)        
+    return (long, lat)
+
+def getBoundingArea3():
+    
+    fr = open(settings.dataFile)
+    
+    # skip first line
+    fr.readline()
+    nTripInCenter = 0;
+    nTotalTrip = 0;
+    
+    max_longitude = -73.914941
+    min_longitude = -74.040039
+    max_latitude = 40.817171
+    min_latitude = 40.690645
+    
+    delta_longitude = (max_longitude - min_longitude) / 210
+    delta_latitude = (max_latitude - min_latitude) / 280
+    
+    A = numpy.zeros((210, 280))
+    X = []
+    Y = []
+    for line in fr:
+        #line = fr.readline()
+        array = line.split(',')
+        pickup_longitude = float(array[10])
+        pickup_latitude = float(array[11])
+        #dropoff_longitude = float(array[12])
+        #dropoff_latitude = float(array[13])
+        
+        if (pickup_longitude > min_longitude and pickup_longitude < max_longitude and 
+            pickup_latitude > min_latitude and pickup_latitude < max_latitude):
+            x = int(math.floor((pickup_longitude - min_longitude) / delta_longitude))
+            y = int(math.floor((pickup_latitude - min_latitude) / delta_latitude))
+            
+            A[x][y] += 1
+    
+    for x in range(210):
+        for y in range(280):
+            if A[x][y] > 20:
+                X.append(x)
+                Y.append(y)
+            
+                
+    # print bounding area
+    fr.close()
+    
+    return (X, Y)        
     
 def getStatistic(sin, cos, ratio, deltaX, deltaY, nRow, nCol, originPosition, nRegions):
     
@@ -121,5 +169,5 @@ def scatterplot(x_data, y_data, x_label="", y_label="", title="", color = "r", y
     plt.show()
 
 
-(long, lat) = getBoundingArea2()
-scatterplot(long, lat)
+(X, Y) = getBoundingArea3()
+scatterplot(X, Y)
